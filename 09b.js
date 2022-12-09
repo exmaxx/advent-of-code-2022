@@ -2015,7 +2015,7 @@ const knots = Array.from({ length: 9 }, (_, k) => ({
   nextKnotId: k + 1,
 }))
 
-// array for 10 knots, each starting at 0,0
+// array for 9 knots, each starting at 0,0
 const knotTracks = Array.from({ length: 9 }, () => new Set(['0,0']))
 
 // Functions
@@ -2037,52 +2037,36 @@ const moveHead = (dir, steps) => {
 }
 
 const pullKnot = (leader, follower) => {
-  const isXtooFar = Math.abs(leader.x - follower.x) > 1
-  const isYtooFar = Math.abs(leader.y - follower.y) > 1
+  const xDiff = leader.x - follower.x
+  const yDiff = leader.y - follower.y
 
-  if (isXtooFar && isYtooFar) {
-    const dirX = leader.x - follower.x > 0 ? 'R' : 'L'
+  const isXtooFar = Math.abs(xDiff) > 1
+  const isYtooFar = Math.abs(yDiff) > 1
 
-    if (dirX === 'L') {
-      follower.x--
-    } else if (dirX === 'R') {
-      follower.x++
-    }
+  if (isXtooFar || isYtooFar) {
+    const isXdifferent = Math.abs(xDiff) > 0
+    const isYdifferent = Math.abs(yDiff) > 0
 
-    const dirY = leader.y - follower.y > 0 ? 'U' : 'D'
+    if (isXdifferent) {
+      const dirX = xDiff > 0 ? 'R' : 'L'
 
-    if (dirY === 'D') {
-      follower.y--
-    } else if (dirY === 'U') {
-      follower.y++
-    }
-  } else {
-    if (isXtooFar) {
-      const dir = leader.x - follower.x > 0 ? 'R' : 'L'
-
-      follower.y = leader.y
-
-      if (dir === 'L') {
+      if (dirX === 'L') {
         follower.x--
-      } else if (dir === 'R') {
+      } else if (dirX === 'R') {
         follower.x++
       }
     }
 
-    if (isYtooFar) {
-      const dir = leader.y - follower.y > 0 ? 'U' : 'D'
+    if (isYdifferent) {
+      const dirY = yDiff > 0 ? 'U' : 'D'
 
-      follower.x = leader.x
-
-      if (dir === 'D') {
+      if (dirY === 'D') {
         follower.y--
-      } else if (dir === 'U') {
+      } else if (dirY === 'U') {
         follower.y++
       }
     }
-  }
 
-  if (isXtooFar || isYtooFar) {
     trackKnot(follower.id)
 
     if (knots[follower.nextKnotId])
